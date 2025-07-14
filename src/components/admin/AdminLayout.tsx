@@ -14,7 +14,8 @@ import {
   Shield,
   Home,
   Plus,
-  Eye
+  Eye,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -51,6 +52,12 @@ const AdminLayout: React.FC = () => {
       href: '/admin/ads',
       icon: Megaphone,
       permission: 'write'
+    },
+    {
+      name: 'Contact Management',
+      href: '/admin/contacts',
+      icon: MessageSquare,
+      permission: 'read'
     },
     {
       name: 'User Management',

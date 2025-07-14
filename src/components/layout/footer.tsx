@@ -1,120 +1,170 @@
 import { Link } from "react-router-dom";
-import { Separator } from "@/components/ui/separator";
 import { Facebook, Twitter, Youtube, Instagram, Rss } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="bg-muted pt-8 sm:pt-12 mt-8 sm:mt-12">
-      <div className="container px-4 sm:px-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          <div className="sm:col-span-2 lg:col-span-1">
-            <Link to="/" className="inline-block mb-4">
-              <span className="font-bold text-xl sm:text-2xl text-primary">The Sach<span className="text-black dark:text-white">Patra</span></span>
+    <footer className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white mt-12">
+      {/* Main Footer Content */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          {/* Brand Section */}
+          <div className="lg:col-span-2">
+            <Link to="/" className="inline-block mb-6">
+              <div className="flex items-center space-x-2">
+                <div className="w-10 h-10 bg-gradient-to-r from-red-600 to-red-700 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">S</span>
+                </div>
+                <span className="font-bold text-2xl">
+                  The <span className="text-red-500">Sach</span>Patra
+                </span>
+              </div>
             </Link>
-            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
-              The Sach Patra आपको देता है देश और दुनिया की ताज़ा खबरें, विश्लेषण और राय।
+
+            <p className="text-gray-300 mb-6 leading-relaxed max-w-md">
+              भारत की सबसे विश्वसनीय समाचार वेबसाइट। हम आपको देश और दुनिया की सच्ची और निष्पक्ष खबरें प्रदान करते हैं।
             </p>
-            <div className="flex space-x-4">
-              <Link to="https://www.facebook.com/share/1a5dktsa1G/?mibextid=wwXIfr" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
-                <Facebook size={20} />
-              </Link>
-              <Link to="https://twitter.com" className="hover:text-primary transition-colors">
-                <Twitter size={20} />
-              </Link>
-              <Link to="https://www.youtube.com/@thesachpatra" className="hover:text-primary" target="_blank" rel="noopener noreferrer">
-                <Youtube size={20} />
-              </Link>
-              <Link to="https://www.instagram.com/thesachpatra_official?igsh=YmdraTM0NTBlaWtt&utm_source=qr" className="hover:text-primary" target="_blank" rel="noopener noreferrer">
-                <Instagram size={20} />
-              </Link>
-              <Link to="/rss" className="hover:text-primary">
-                <Rss size={20} />
-              </Link>
+
+            <div className="mb-6">
+              <h4 className="text-white font-semibold mb-4 flex items-center">
+                <span className="w-1 h-6 bg-red-500 mr-3"></span>
+                सोशल मीडिया
+              </h4>
+              <div className="flex space-x-3">
+                <Link
+                  to="https://www.facebook.com/share/1a5dktsa1G/?mibextid=wwXIfr"
+                  className="w-10 h-10 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Facebook size={18} />
+                </Link>
+                <Link
+                  to="https://twitter.com"
+                  className="w-10 h-10 bg-sky-500 hover:bg-sky-600 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                >
+                  <Twitter size={18} />
+                </Link>
+                <Link
+                  to="https://www.youtube.com/@thesachpatra"
+                  className="w-10 h-10 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Youtube size={18} />
+                </Link>
+                <Link
+                  to="https://www.instagram.com/thesachpatra_official?igsh=YmdraTM0NTBlaWtt&utm_source=qr"
+                  className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Instagram size={18} />
+                </Link>
+               
+              </div>
             </div>
           </div>
 
+          {/* News Categories */}
           <div>
-            <h3 className="font-medium text-lg mb-4">श्रेणियां</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/latest" className="text-sm hover:text-primary">ताज़ा खबरें</Link>
-              </li>
-              <li>
-                <Link to="/national" className="text-sm hover:text-primary">देश</Link>
-              </li>
-              <li>
-                <Link to="/international" className="text-sm hover:text-primary">विदेश</Link>
-              </li>
-              <li>
-                <Link to="/politics" className="text-sm hover:text-primary">राजनीति</Link>
-              </li>
-              <li>
-                <Link to="/sports" className="text-sm hover:text-primary">खेल</Link>
-              </li>
-              <li>
-                <Link to="/entertainment" className="text-sm hover:text-primary">मनोरंजन</Link>
-              </li>
-              <li>
-                <Link to="/technology" className="text-sm hover:text-primary">तकनीक</Link>
-              </li>
+            <h3 className="text-white font-semibold mb-6 flex items-center">
+              <span className="w-1 h-6 bg-red-500 mr-3"></span>
+              समाचार श्रेणियां
+            </h3>
+            <ul className="space-y-3">
+              {[
+                { to: "/latest", label: "ताज़ा खबरें" },
+                { to: "/national", label: "देश" },
+                { to: "/international", label: "विदेश" },
+                { to: "/politics", label: "राजनीति" },
+                { to: "/sports", label: "खेल" },
+                { to: "/entertainment", label: "मनोरंजन" },
+                { to: "/technology", label: "तकनीक" },
+                { to: "/business", label: "व्यापार" },
+                { to: "/education", label: "शिक्षा" },
+                { to: "/agriculture", label: "कृषि" }
+              ].map((item, index) => (
+                <li key={index}>
+                  <Link
+                    to={item.to}
+                    className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm flex items-center group"
+                  >
+                    <span className="w-1.5 h-1.5 bg-gray-500 rounded-full mr-3 group-hover:bg-red-400 transition-colors"></span>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
+          {/* Important Links */}
           <div>
-            <h3 className="font-medium text-lg mb-4">अन्य लिंक</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/live-tv" className="text-sm hover:text-primary">लाइव टीवी</Link>
-              </li>
-              <li>
-                <Link to="/podcasts" className="text-sm hover:text-primary">पॉडकास्ट</Link>
-              </li>
-              <li>
-                <Link to="/photo-gallery" className="text-sm hover:text-primary">फोटो गैलरी</Link>
-              </li>
-              <li>
-                <Link to="/videos" className="text-sm hover:text-primary">वीडियो</Link>
-              </li>
-              <li>
-                <Link to="/archives" className="text-sm hover:text-primary">आर्काइव</Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-medium text-lg mb-4">संपर्क और सूचना</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link to="/about" className="text-sm hover:text-primary">हमारे बारे में</Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-sm hover:text-primary">संपर्क करें</Link>
-              </li>
-              <li>
-                <Link to="/team" className="text-sm hover:text-primary">हमारी टीम</Link>
-              </li>
-              <li>
-                <Link to="/advertise" className="text-sm hover:text-primary">विज्ञापन दें</Link>
-              </li>
-              <li>
-                <Link to="/privacy-policy" className="text-sm hover:text-primary">निजता नीति</Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-sm hover:text-primary">नियम और शर्तें</Link>
-              </li>
+            <h3 className="text-white font-semibold mb-6 flex items-center">
+              <span className="w-1 h-6 bg-red-500 mr-3"></span>
+              महत्वपूर्ण लिंक
+            </h3>
+            <ul className="space-y-3">
+              {[
+                { to: "/about", label: "हमारे बारे में" },
+                { to: "/contact", label: "संपर्क करें" },
+                // { to: "/team", label: "हमारी टीम" },
+                // { to: "/advertise", label: "विज्ञापन दें" },
+                { to: "/privacy-policy", label: "निजता नीति" },
+                // { to: "/terms", label: "नियम और शर्तें" }
+              ].map((item, index) => (
+                <li key={index}>
+                  <Link
+                    to={item.to}
+                    className="text-gray-300 hover:text-red-400 transition-colors duration-200 text-sm flex items-center group"
+                  >
+                    <span className="w-1.5 h-1.5 bg-gray-500 rounded-full mr-3 group-hover:bg-red-400 transition-colors"></span>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
+      </div>
 
-        <Separator className="my-8" />
 
-        <div className="flex flex-col sm:flex-row justify-between items-center pb-6 sm:pb-8 space-y-2 sm:space-y-0">
-          <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-            © {new Date().getFullYear()} समाचार हिंदी। सर्वाधिकार सुरक्षित।
-          </p>
-          <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-right">
-            हमारे उपयोग की शर्तों और निजता नीति का पालन करना आवश्यक है।
-          </p>
+      {/* Footer Bottom */}
+      <div className="border-t border-slate-700">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div className="text-center md:text-left">
+              <p className="text-gray-400 text-sm">
+                © {new Date().getFullYear()} <span className="text-red-400 font-semibold">The Sach Patra</span>। सर्वाधिकार सुरक्षित।
+              </p>
+              <p className="text-gray-500 text-xs mt-1">
+                सत्य की आवाज़, आपके साथ 
+              </p>
+            </div>
+
+            <div className="flex items-center space-x-6 text-sm">
+              <Link
+                to="/privacy-policy"
+                className="text-gray-400 hover:text-red-400 transition-colors duration-200"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-gray-600">•</span>
+              <Link
+                to="/terms"
+                className="text-gray-400 hover:text-red-400 transition-colors duration-200"
+              >
+                Terms of Service
+              </Link>
+              <span className="text-gray-600">•</span>
+              <Link
+                to="/contact"
+                className="text-gray-400 hover:text-red-400 transition-colors duration-200"
+              >
+                Contact Us
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

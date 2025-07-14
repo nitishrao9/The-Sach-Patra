@@ -14,6 +14,7 @@ import NewsDetail from './pages/NewsDetail';
 import CategoryPage from './pages/CategoryPage';
 import StateCategoryPage from './pages/StateCategoryPage';
 import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 import SearchResults from './pages/SearchResults';
 import NotFound from './pages/NotFound';
 
@@ -23,6 +24,7 @@ import LoginPage from './pages/admin/LoginPage';
 import DashboardPage from './pages/admin/DashboardPage';
 import AdManagementPage from './pages/admin/AdManagementPage';
 import NewsManagementPage from './pages/admin/NewsManagementPage';
+import ContactManagementPage from './pages/admin/ContactManagementPage';
 import UserManagementPage from './pages/admin/UserManagementPage';
 
 
@@ -44,6 +46,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
               <Route path="/search" element={<SearchResults />} />
               <Route path="/latest" element={<CategoryPage />} />
               <Route path="/national" element={<StateCategoryPage />} />
@@ -54,6 +57,8 @@ const App = () => (
               <Route path="/entertainment" element={<CategoryPage />} />
               <Route path="/technology" element={<CategoryPage />} />
               <Route path="/business" element={<CategoryPage />} />
+              <Route path="/education" element={<CategoryPage />} />
+              <Route path="/agriculture" element={<CategoryPage />} />
               <Route path="/special-reports" element={<CategoryPage />} />
               <Route path="/category/:category" element={<CategoryPage />} />
 
@@ -79,6 +84,7 @@ const App = () => (
                     <AdManagementPage />
                   </ProtectedRoute>
                 } />
+                <Route path="contacts" element={<ContactManagementPage />} />
                 <Route path="users" element={
                   <ProtectedRoute requireAdmin>
                     <UserManagementPage />

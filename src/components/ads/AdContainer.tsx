@@ -32,8 +32,8 @@ export const AdContainer: React.FC<AdContainerProps> = ({
   if (loading) {
     return (
       <div className={`ad-container ${className}`}>
-        <div className="text-xs text-gray-700 mb-2 text-center font-semibold uppercase tracking-wide border-b border-gray-200 pb-1">
-          Sponsored
+        <div className="text-xs text-gray-800 text-center font-bold uppercase tracking-wider  border py-2 px-3 mb-3 rounded">
+          SPONSORED
         </div>
         <div className="animate-pulse bg-gray-200 rounded-lg w-full h-20 sm:h-24 md:h-28"></div>
       </div>
@@ -76,14 +76,14 @@ export const AdContainer: React.FC<AdContainerProps> = ({
 
   return (
     <div className={`ad-container ${className}`}>
-      <div className="text-xs text-gray-700 mb-2 text-center font-semibold uppercase tracking-wide border-b border-gray-200 pb-1">
-        Sponsored
+      <div className="text-xs text-gray-800 text-center font-bold uppercase tracking-wider    py-2 px-3 mb-1n mt-4 rounded">
+         SPONSORED
       </div>
       {displayAds.map((ad) => (
         <AdBanner
           key={ad.id}
           ad={ad}
-          className="mb-3 sm:mb-4"
+          className=""
           sizeClasses={sizeClasses}
         />
       ))}

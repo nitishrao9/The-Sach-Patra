@@ -157,7 +157,7 @@ export default function Index() {
   return (
     <Layout>
       {/* Header Advertisement - Full Width */}
-      <div className="w-full mb-4 sm:mb-6">
+      <div className="w-full -mt-2">
         <AdContainer position="header" className="text-center" />
       </div>
 

@@ -21,7 +21,8 @@ import {
   Globe,
   Activity,
   Clock,
-  AlertCircle
+  AlertCircle,
+  MessageSquare
 } from 'lucide-react';
 
 const DashboardPage: React.FC = () => {
@@ -30,6 +31,8 @@ const DashboardPage: React.FC = () => {
     totalNews: 0,
     totalUsers: 0,
     totalAds: 0,
+    totalContacts: 0,
+    newContacts: 0,
     totalViews: 0,
     todayViews: 0,
     thisMonthNews: 0,
@@ -75,6 +78,11 @@ const DashboardPage: React.FC = () => {
       const adsSnapshot = await getDocs(adsQuery);
       const ads = adsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
+      // Fetch contacts
+      const contactsQuery = query(collection(db, 'contacts'));
+      const contactsSnapshot = await getDocs(contactsQuery);
+      const contacts = contactsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
       // Calculate stats
       const publishedNews = newsArticles.filter(article => article.status === 'published').length;
       const draftNews = newsArticles.filter(article => article.status === 'draft').length;
@@ -99,6 +107,8 @@ const DashboardPage: React.FC = () => {
         totalNews: newsArticles.length,
         totalUsers: users.length,
         totalAds: ads.length,
+        totalContacts: contacts.length,
+        newContacts: contacts.filter(contact => contact.status === 'new').length,
         totalViews,
         todayViews: Math.floor(totalViews * 0.1), // Estimate today's views
         thisMonthNews,
@@ -298,6 +308,23 @@ const DashboardPage: React.FC = () => {
 
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Contact Messages</CardTitle>
+            <MessageSquare className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.totalContacts}</div>
+            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+              <span className="text-red-600">New: {stats.newContacts}</span>
+              <span className="text-green-600">Total: {stats.totalContacts}</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {stats.newContacts} need attention
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Views</CardTitle>
             <Eye className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -429,6 +456,17 @@ const DashboardPage: React.FC = () => {
                 <Link to="/admin/ads">
                   <Megaphone className="h-4 w-4 mr-2" />
                   Manage Ads
+                </Link>
+              </Button>
+              <Button className="w-full justify-start" variant="outline" asChild>
+                <Link to="/admin/contacts">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Manage Contacts
+                  {stats.newContacts > 0 && (
+                    <span className="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                      {stats.newContacts}
+                    </span>
+                  )}
                 </Link>
               </Button>
               {isAdmin() && (

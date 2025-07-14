@@ -116,6 +116,20 @@ export interface BreakingNews {
   updatedAt: Date;
 }
 
+// Contact form types
+export interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  type: 'general' | 'news-tip' | 'feedback' | 'advertising' | 'partnership' | 'technical';
+  status: 'new' | 'read' | 'replied' | 'resolved';
+  createdAt: Date;
+  updatedAt: Date;
+  adminNotes?: string;
+}
+
 // Pagination types
 export interface PaginationData<T> {
   items: T[];

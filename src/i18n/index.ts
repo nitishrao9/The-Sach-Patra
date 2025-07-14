@@ -74,18 +74,8 @@ const resources = {
       "hindi": "हिंदी",
       "english": "English",
 
-      // Categories (for consistency)
-      "latest": "ताज़ा खबरें",
-      "national": "देश",
-      "international": "विदेश",
-      "politics": "राजनीति",
-      "sports": "खेल",
-      "entertainment": "मनोरंजन",
-      "technology": "तकनीक",
-      "business": "व्यापार",
-      "education": "शिक्षा",
-      "agriculture": "कृषि",
-      "special": "विशेष"
+      // Additional translations
+      "latest": "ताज़ा खबरें"
     }
   },
   en: {
@@ -158,16 +148,8 @@ const resources = {
       "hindi": "हिंदी",
       "english": "English",
 
-      // Categories (for consistency)
-      "latest": "Latest News",
-      "national": "National",
-      "international": "International",
-      "politics": "Politics",
-      "sports": "Sports",
-      "entertainment": "Entertainment",
-      "technology": "Technology",
-      "business": "Business",
-      "special": "Special Reports"
+      // Additional translations
+      "latest": "Latest News"
     }
   }
 };
