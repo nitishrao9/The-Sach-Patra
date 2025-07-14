@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Sach Patra - ताज़ा खबरें, विचार और विश्लेषण</title>
+  <meta name="description" content="आज की ताज़ा खबरें, हिंदी समाचार पत्र, देश और दुनिया की खबरें, बिज़नेस समाचार, बॉलीवुड न्यूज़, विश्लेषण और राय" />
+  <meta name="author" content="The Sach Patra" />
+
+  <meta property="og:title" content="The Sach Patra - ताज़ा खबरें" />
+  <meta property="og:description" content="आज की ताज़ा खबरें, हिंदी समाचार पत्र, देश और दुनिया की खबरें" />
+  <meta property="og:type" content="website" />
+
+  <!-- DNS prefetch for external domains -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="dns-prefetch" href="//firebaseapp.com">
+  <link rel="dns-prefetch" href="//googleapis.com">
+
+  <!-- Preconnect to critical domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Optimized font loading with font-display: swap -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Preload critical assets -->
+  <link rel="preload" href="/sachptralogo.jpg" as="image" type="image/jpeg">
+
+  <!-- Critical CSS inline (will be handled by Vite) -->
+  <style>
+    /* Critical above-the-fold styles */
+    body { margin: 0; font-family: 'Noto Sans Devanagari', sans-serif; }
+    #root { min-height: 100vh; }
+    .loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>
