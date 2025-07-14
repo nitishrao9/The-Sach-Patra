@@ -92,7 +92,7 @@ export function Navbar() {
               className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full object-cover"
               loading="eager"
             />
-            <span className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-white">The Sach Patra</span>
+            <span className="font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl text-white">The Sachpatra</span>
           </Link>
           
           {/* Desktop Navigation */}

@@ -20,7 +20,7 @@ export function Footer() {
                   loading="lazy"
                 />
                 <span className="font-bold text-2xl">
-                  The Sach Patra
+                  The Sachpatra
                 </span>
               </div>
             </Link>
@@ -141,7 +141,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-center md:text-left">
               <p className="text-gray-400 text-sm">
-                © {new Date().getFullYear()} <span className="text-white font-semibold">The Sach Patra</span>
+                © {new Date().getFullYear()} <span className="text-white font-semibold">The Sachpatra</span>
               </p>
               <p className="text-white text-xs mt-1">
                 खबर वही, जो सच कहे
