@@ -81,11 +81,11 @@ export function Navbar() {
           </Button>
         </div>
       </div>
-      <div className="w-full max-w-none py-2 sm:py-3 px-2 sm:px-4 lg:px-6 xl:px-8 bg-red-700 text-white">
+      <div className="w-full max-w-none py-2 sm:py-3 px-2 sm:px-4 lg:px-6 xl:px-8 bg-blue-950 text-white">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
             <img
-              src="/sachptralogo.jpg"
+              src="/sachpatra.jpg"
               alt="The Sach Patra Logo"
               width="48"
               height="48"

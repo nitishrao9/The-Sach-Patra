@@ -62,6 +62,7 @@ const NewsManagementPage: React.FC = () => {
   const [currentTab, setCurrentTab] = useState('all');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showOnlyMyArticles, setShowOnlyMyArticles] = useState(false);
   
   const [formData, setFormData] = useState({
     title: '',
@@ -200,8 +201,9 @@ const NewsManagementPage: React.FC = () => {
                       (currentTab === 'draft' && article.status === 'draft') ||
                       (currentTab === 'featured' && article.featured) ||
                       (currentTab === 'latestNews' && article.latestNews);
-    
-    return matchesSearch && matchesCategory && matchesStatus && matchesTab;
+    const matchesOwnership = !showOnlyMyArticles || article.createdBy === currentUser?.id;
+
+    return matchesSearch && matchesCategory && matchesStatus && matchesTab && matchesOwnership;
   });
 
   const resetForm = () => {
@@ -267,7 +269,27 @@ const NewsManagementPage: React.FC = () => {
     }
   };
 
+  // Check if current user can edit/delete a specific article
+  const canEditArticle = (article: NewsArticle) => {
+    // Admins can edit any article
+    if (currentUser?.role === 'admin') {
+      return true;
+    }
+
+    // Editors can only edit their own articles
+    if (currentUser?.role === 'editor') {
+      return article.createdBy === currentUser.id;
+    }
+
+    return false;
+  };
+
   const handleEdit = (article: NewsArticle) => {
+    if (!canEditArticle(article)) {
+      setError('You can only edit your own articles');
+      return;
+    }
+
     setEditingArticle(article);
     setFormData({
       title: article.title,
@@ -310,6 +332,7 @@ const NewsManagementPage: React.FC = () => {
         updatedAt: new Date(),
         ...(editingArticle ? {} : {
           createdAt: new Date(),
+          createdBy: currentUser?.id, // Track who created the article
           views: 0,
           commentsCount: 0
         })
@@ -338,6 +361,17 @@ const NewsManagementPage: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
+    const article = articles.find(a => a.id === id);
+    if (!article) {
+      setError('Article not found');
+      return;
+    }
+
+    if (!canEditArticle(article)) {
+      setError('You can only delete your own articles');
+      return;
+    }
+
     if (confirm('Are you sure you want to delete this article?')) {
       try {
         await deleteDoc(doc(db, 'news', id));
@@ -878,6 +912,18 @@ const NewsManagementPage: React.FC = () => {
                   <SelectItem value="archived">Archived</SelectItem>
                 </SelectContent>
               </Select>
+              {currentUser?.role === 'editor' && (
+                <div className="flex items-center space-x-2 px-3 py-2 border rounded-md">
+                  <Switch
+                    id="my-articles"
+                    checked={showOnlyMyArticles}
+                    onCheckedChange={setShowOnlyMyArticles}
+                  />
+                  <Label htmlFor="my-articles" className="text-sm font-medium">
+                    My Articles Only
+                  </Label>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
@@ -942,7 +988,12 @@ const NewsManagementPage: React.FC = () => {
                       <TableCell>
                         <Badge variant="outline">{getCategoryDisplayName(article.category, 'en')}</Badge>
                       </TableCell>
-                      <TableCell>{article.author}</TableCell>
+                      <TableCell>
+                        {article.author}
+                        {article.createdBy === currentUser?.id && (
+                          <span className="ml-1 text-blue-600 font-medium text-xs">(You)</span>
+                        )}
+                      </TableCell>
                       <TableCell>
                         <Badge
                           variant={article.status === 'published' ? 'default' : article.status === 'draft' ? 'secondary' : 'destructive'}
@@ -965,22 +1016,26 @@ const NewsManagementPage: React.FC = () => {
                               <Eye className="h-4 w-4" />
                             </Link>
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleEdit(article)}
-                            title="Edit Article"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(article.id)}
-                            title="Delete Article"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          {canEditArticle(article) && (
+                            <>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEdit(article)}
+                                title="Edit Article"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDelete(article.id)}
+                                title="Delete Article"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -1025,7 +1080,12 @@ const NewsManagementPage: React.FC = () => {
                       >
                         {article.status}
                       </Badge>
-                      <span className="text-xs text-gray-500">by {article.author}</span>
+                      <span className="text-xs text-gray-500">
+                        by {article.author}
+                        {article.createdBy === currentUser?.id && (
+                          <span className="ml-1 text-blue-600 font-medium">(You)</span>
+                        )}
+                      </span>
                     </div>
 
                     {/* Stats */}
@@ -1055,23 +1115,27 @@ const NewsManagementPage: React.FC = () => {
                           View
                         </Link>
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(article)}
-                        className="flex-1 touch-target"
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(article.id)}
-                        className="touch-target text-red-600 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {canEditArticle(article) && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(article)}
+                            className="flex-1 touch-target"
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDelete(article.id)}
+                            className="touch-target text-red-600 hover:text-red-700 hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </Card>

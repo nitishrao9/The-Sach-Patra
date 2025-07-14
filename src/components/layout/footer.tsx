@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Youtube, Instagram, Rss } from "lucide-react";
+import { Facebook, Youtube, Instagram, Rss } from "lucide-react";
+import { XIcon } from "@/components/icons/XIcon";
 
 export function Footer() {
   return (
@@ -12,11 +13,14 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Link to="/" className="inline-block mb-6">
               <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-gradient-to-r from-red-600 to-red-700 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">S</span>
-                </div>
+                <img
+                  src="/sachpatra.jpg"
+                  alt="The Sach Patra Logo"
+                  className="w-10 h-10 rounded-lg object-cover"
+                  loading="lazy"
+                />
                 <span className="font-bold text-2xl">
-                  The <span className="text-red-500">Sach</span>Patra
+                  The Sach Patra
                 </span>
               </div>
             </Link>
@@ -40,10 +44,12 @@ export function Footer() {
                   <Facebook size={18} />
                 </Link>
                 <Link
-                  to="https://twitter.com"
-                  className="w-10 h-10 bg-sky-500 hover:bg-sky-600 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  to="https://x.com/thesachpatra?s=11"
+                  className="w-10 h-10 bg-black hover:bg-gray-800 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Twitter size={18} />
+                  <XIcon size={18} />
                 </Link>
                 <Link
                   to="https://www.youtube.com/@thesachpatra"
@@ -135,15 +141,15 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-center md:text-left">
               <p className="text-gray-400 text-sm">
-                © {new Date().getFullYear()} <span className="text-red-400 font-semibold">The Sach Patra</span>। सर्वाधिकार सुरक्षित।
+                © {new Date().getFullYear()} <span className="text-white font-semibold">The Sach Patra</span>
               </p>
-              <p className="text-gray-500 text-xs mt-1">
-                सत्य की आवाज़, आपके साथ 
-              </p>
+              <p className="text-white text-xs mt-1">
+                खबर वही, जो सच कहे
+              </p> 
             </div>
 
             <div className="flex items-center space-x-6 text-sm">
-              <Link
+              {/* <Link
                 to="/privacy-policy"
                 className="text-gray-400 hover:text-red-400 transition-colors duration-200"
               >
@@ -155,7 +161,7 @@ export function Footer() {
                 className="text-gray-400 hover:text-red-400 transition-colors duration-200"
               >
                 Terms of Service
-              </Link>
+              </Link> */}
               <span className="text-gray-600">•</span>
               <Link
                 to="/contact"

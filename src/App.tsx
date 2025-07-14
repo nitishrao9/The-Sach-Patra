@@ -26,6 +26,7 @@ import AdManagementPage from './pages/admin/AdManagementPage';
 import NewsManagementPage from './pages/admin/NewsManagementPage';
 import ContactManagementPage from './pages/admin/ContactManagementPage';
 import UserManagementPage from './pages/admin/UserManagementPage';
+import MigrationPage from './pages/admin/MigrationPage';
 
 
 
@@ -80,7 +81,7 @@ const App = () => (
                   </ProtectedRoute>
                 } />
                 <Route path="ads" element={
-                  <ProtectedRoute requireEditor>
+                  <ProtectedRoute requireAdmin>
                     <AdManagementPage />
                   </ProtectedRoute>
                 } />
@@ -88,6 +89,11 @@ const App = () => (
                 <Route path="users" element={
                   <ProtectedRoute requireAdmin>
                     <UserManagementPage />
+                  </ProtectedRoute>
+                } />
+                <Route path="migration" element={
+                  <ProtectedRoute requireAdmin>
+                    <MigrationPage />
                   </ProtectedRoute>
                 } />
               </Route>

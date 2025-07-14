@@ -33,6 +33,7 @@ export interface NewsArticle {
   videoUrl?: string;
   relatedLinks?: RelatedLink[]; // Related links within the article
   author: string;
+  createdBy?: string; // User ID of the creator (for role-based permissions)
   publishedAt: string;
   createdAt: Date;
   updatedAt: Date;

@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { collection, getDocs, doc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, updateProfile, deleteUser } from 'firebase/auth';
+import { auth, db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -22,34 +25,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Edit, Trash2, Shield, User, Crown } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Plus, Edit, Trash2, Shield, User, Crown, Loader2, AlertTriangle } from 'lucide-react';
 import { User as UserType, ROLE_LEVELS } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 
 const UserManagementPage: React.FC = () => {
-  const { currentUser } = useAuth();
-  
-  // Mock users data - replace with Firebase data
-  const [users, setUsers] = useState<UserType[]>([
-    {
-      id: '1',
-      email: 'admin@news.com',
-      displayName: 'Admin User',
-      role: 'admin',
-      roleLevel: 1,
-      createdAt: new Date('2024-01-01'),
-      updatedAt: new Date('2024-01-01')
-    },
-    {
-      id: '2',
-      email: 'editor@news.com',
-      displayName: 'Editor User',
-      role: 'editor',
-      roleLevel: 2,
-      createdAt: new Date('2024-01-15'),
-      updatedAt: new Date('2024-01-15')
-    }
-  ]);
+  const { currentUser, register } = useAuth();
+
+  const [users, setUsers] = useState<UserType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserType | null>(null);
@@ -60,27 +47,98 @@ const UserManagementPage: React.FC = () => {
     password: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const newUser: UserType = {
-      id: editingUser?.id || Date.now().toString(),
-      email: formData.email,
-      displayName: formData.displayName,
-      role: formData.role,
-      roleLevel: ROLE_LEVELS[formData.role],
-      createdAt: editingUser?.createdAt || new Date(),
-      updatedAt: new Date()
-    };
+  // Load users from Firestore
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const usersRef = collection(db, 'users');
+      const snapshot = await getDocs(usersRef);
+      const usersData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+        updatedAt: doc.data().updatedAt?.toDate() || new Date(),
+      })) as UserType[];
 
-    if (editingUser) {
-      setUsers(users.map(user => user.id === editingUser.id ? newUser : user));
-    } else {
-      setUsers([...users, newUser]);
+      // Sort users by creation date (newest first)
+      usersData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+      setUsers(usersData);
+      setError(null);
+    } catch (error) {
+      console.error('Error loading users:', error);
+      setError('Failed to load users');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    resetForm();
-    setIsDialogOpen(false);
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      if (editingUser) {
+        // Update existing user
+        const userRef = doc(db, 'users', editingUser.id);
+        await updateDoc(userRef, {
+          displayName: formData.displayName,
+          role: formData.role,
+          roleLevel: ROLE_LEVELS[formData.role],
+          updatedAt: new Date()
+        });
+      } else {
+        // Create new user
+        if (!formData.password) {
+          setError('Password is required for new users');
+          return;
+        }
+
+        // Create Firebase Auth user
+        const { user } = await createUserWithEmailAndPassword(
+          auth,
+          formData.email,
+          formData.password
+        );
+
+        // Update display name
+        await updateProfile(user, {
+          displayName: formData.displayName
+        });
+
+        // Create user document in Firestore
+        const userData = {
+          email: formData.email,
+          displayName: formData.displayName,
+          role: formData.role,
+          roleLevel: ROLE_LEVELS[formData.role],
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+
+        await setDoc(doc(db, 'users', user.uid), userData);
+      }
+
+      await loadUsers(); // Reload users from Firestore
+      resetForm();
+      setIsDialogOpen(false);
+    } catch (error: any) {
+      console.error('Error saving user:', error);
+      if (error.code === 'auth/email-already-in-use') {
+        setError('Email is already in use');
+      } else if (error.code === 'auth/weak-password') {
+        setError('Password should be at least 6 characters');
+      } else {
+        setError(error.message || 'Failed to save user');
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -104,28 +162,57 @@ const UserManagementPage: React.FC = () => {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (id === currentUser?.id) {
       alert('You cannot delete your own account');
       return;
     }
-    
-    if (confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter(user => user.id !== id));
+
+    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+      try {
+        setSubmitting(true);
+
+        // Delete user document from Firestore
+        await deleteDoc(doc(db, 'users', id));
+
+        // Note: We cannot delete the Firebase Auth user from the client side
+        // This would need to be done from the server side or Firebase Admin SDK
+        // For now, we'll just remove from Firestore
+
+        await loadUsers(); // Reload users
+        setError(null);
+      } catch (error: any) {
+        console.error('Error deleting user:', error);
+        setError('Failed to delete user');
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
-  const changeUserRole = (userId: string, newRole: UserType['role']) => {
+  const changeUserRole = async (userId: string, newRole: UserType['role']) => {
     if (userId === currentUser?.id && newRole !== 'admin') {
       alert('You cannot change your own admin role');
       return;
     }
-    
-    setUsers(users.map(user =>
-      user.id === userId
-        ? { ...user, role: newRole, roleLevel: ROLE_LEVELS[newRole], updatedAt: new Date() }
-        : user
-    ));
+
+    try {
+      setSubmitting(true);
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, {
+        role: newRole,
+        roleLevel: ROLE_LEVELS[newRole],
+        updatedAt: new Date()
+      });
+
+      await loadUsers(); // Reload users
+      setError(null);
+    } catch (error: any) {
+      console.error('Error updating user role:', error);
+      setError('Failed to update user role');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const getRoleIcon = (role: UserType['role']) => {
@@ -150,8 +237,26 @@ const UserManagementPage: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading users...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
+      {error && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-4 sm:space-y-0">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">User Management</h1>
@@ -176,6 +281,13 @@ const UserManagementPage: React.FC = () => {
             </DialogHeader>
 
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">Email</Label>
@@ -251,9 +363,19 @@ const UserManagementPage: React.FC = () => {
                 </Button>
                 <Button
                   type="submit"
+                  disabled={submitting}
                   className="w-full sm:w-auto order-1 sm:order-2"
                 >
-                  {editingUser ? 'Update' : 'Create'} User
+                  {submitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {editingUser ? 'Updating...' : 'Creating...'}
+                    </>
+                  ) : (
+                    <>
+                      {editingUser ? 'Update' : 'Create'} User
+                    </>
+                  )}
                 </Button>
               </div>
             </form>
@@ -310,7 +432,7 @@ const UserManagementPage: React.FC = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>User</TableHead>
-                  <TableHead>Role & Level</TableHead>
+                  <TableHead>Role</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead>Last Updated</TableHead>
                   <TableHead>Actions</TableHead>
@@ -330,34 +452,22 @@ const UserManagementPage: React.FC = () => {
                       <Select
                         value={user.role}
                         onValueChange={(value: UserType['role']) => changeUserRole(user.id, value)}
-                        disabled={user.id === currentUser?.id}
+                        disabled={user.id === currentUser?.id || submitting}
                       >
                         <SelectTrigger className="w-40">
-                          <div className="flex items-center space-x-2">
-                            {getRoleIcon(user.role)}
-                            <div className="flex flex-col items-start">
-                              <SelectValue />
-                              <span className="text-xs text-gray-500">Level {user.roleLevel}</span>
-                            </div>
-                          </div>
+                          <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="editor">
                             <div className="flex items-center space-x-2">
                               <Shield className="h-4 w-4" />
-                              <div>
-                                <div>Editor</div>
-                                <div className="text-xs text-gray-500">Level 2</div>
-                              </div>
+                              <span>Editor</span>
                             </div>
                           </SelectItem>
                           <SelectItem value="admin">
                             <div className="flex items-center space-x-2">
                               <Crown className="h-4 w-4" />
-                              <div>
-                                <div>Admin</div>
-                                <div className="text-xs text-gray-500">Level 1</div>
-                              </div>
+                              <span>Admin</span>
                             </div>
                           </SelectItem>
                         </SelectContent>
@@ -383,7 +493,7 @@ const UserManagementPage: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDelete(user.id)}
-                        disabled={user.id === currentUser?.id}
+                        disabled={user.id === currentUser?.id || submitting}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -413,8 +523,8 @@ const UserManagementPage: React.FC = () => {
 
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-500">Level:</span>
-                      <span className="ml-1 font-medium">{user.roleLevel}</span>
+                      <span className="text-gray-500">Role:</span>
+                      <span className="ml-1 font-medium capitalize">{user.role}</span>
                     </div>
                     <div>
                       <span className="text-gray-500">Created:</span>
@@ -426,7 +536,7 @@ const UserManagementPage: React.FC = () => {
                     <Select
                       value={user.role}
                       onValueChange={(value: UserType['role']) => changeUserRole(user.id, value)}
-                      disabled={user.id === currentUser?.id}
+                      disabled={user.id === currentUser?.id || submitting}
                     >
                       <SelectTrigger className="w-32">
                         <SelectValue />
@@ -451,7 +561,7 @@ const UserManagementPage: React.FC = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDelete(user.id)}
-                        disabled={user.id === currentUser?.id}
+                        disabled={user.id === currentUser?.id || submitting}
                         className="touch-target"
                       >
                         <Trash2 className="h-4 w-4" />

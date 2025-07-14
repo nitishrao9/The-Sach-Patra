@@ -9,15 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { ContactSubmission } from '@/types';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock, 
-  Send, 
-  Facebook, 
-  Twitter, 
-  Youtube, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  Send,
+  Facebook,
+  Youtube,
   Instagram,
   MessageSquare,
   User,
@@ -25,6 +24,7 @@ import {
   Loader2
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { XIcon } from "@/components/icons/XIcon";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -69,7 +69,7 @@ export default function ContactPage() {
     {
       icon: Mail,
       title: "ईमेल पता",
-      value: "contact@thesachpatra.com",
+      value: "thesachpatra@gmail.com",
       description: "हमें ईमेल करें"
     },
     {
@@ -280,11 +280,13 @@ export default function ContactPage() {
                     <span className="text-sm font-medium">Facebook</span>
                   </Link>
                   <Link
-                    to="https://twitter.com"
-                    className="flex items-center gap-2 p-3 bg-sky-50 hover:bg-sky-100 dark:bg-sky-950 dark:hover:bg-sky-900 rounded-lg transition-colors"
+                    to="https://x.com/thesachpatra?s=11"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-3 bg-gray-50 hover:bg-gray-100 dark:bg-gray-950 dark:hover:bg-gray-900 rounded-lg transition-colors"
                   >
-                    <Twitter className="h-5 w-5 text-sky-600" />
-                    <span className="text-sm font-medium">Twitter</span>
+                    <XIcon className="h-5 w-5 text-gray-900 dark:text-gray-100" />
+                    <span className="text-sm font-medium">X (Twitter)</span>
                   </Link>
                   <Link
                     to="https://www.youtube.com/@thesachpatra"

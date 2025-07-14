@@ -51,7 +51,7 @@ const AdminLayout: React.FC = () => {
       name: 'Advertisement Management',
       href: '/admin/ads',
       icon: Megaphone,
-      permission: 'write'
+      permission: 'admin'
     },
     {
       name: 'Contact Management',

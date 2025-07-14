@@ -7,7 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Facebook, Twitter, Linkedin, Link2, MessageSquare, Calendar, User, Loader2 } from "lucide-react";
+import { Facebook, Linkedin, Link2, MessageSquare, Calendar, User, Loader2 } from "lucide-react";
+import { XIcon } from "@/components/icons/XIcon";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -263,7 +264,7 @@ export default function NewsDetail() {
                     <Facebook className="h-4 w-4" />
                   </Button>
                   <Button variant="outline" size="icon">
-                    <Twitter className="h-4 w-4" />
+                    <XIcon size={16} />
                   </Button>
                   <Button variant="outline" size="icon">
                     <Linkedin className="h-4 w-4" />

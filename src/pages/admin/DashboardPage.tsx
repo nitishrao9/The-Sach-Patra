@@ -48,7 +48,7 @@ const DashboardPage: React.FC = () => {
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
   const [recentNews, setRecentNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
-  const [initializingViews, setInitializingViews] = useState(false);
+
 
   // Fetch real data from Firebase
   const fetchDashboardData = async () => {
@@ -73,10 +73,13 @@ const DashboardPage: React.FC = () => {
         users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       }
 
-      // Fetch advertisements
-      const adsQuery = query(collection(db, 'advertisements'));
-      const adsSnapshot = await getDocs(adsQuery);
-      const ads = adsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Fetch advertisements (only for admins)
+      let ads: any[] = [];
+      if (isAdmin()) {
+        const adsQuery = query(collection(db, 'advertisements'));
+        const adsSnapshot = await getDocs(adsQuery);
+        ads = adsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      }
 
       // Fetch contacts
       const contactsQuery = query(collection(db, 'contacts'));
@@ -161,23 +164,7 @@ const DashboardPage: React.FC = () => {
     return `${diffInDays} days ago`;
   };
 
-  // Initialize views for existing articles
-  const handleInitializeViews = async () => {
-    if (!isAdmin()) return;
 
-    try {
-      setInitializingViews(true);
-      await newsService.initializeViewsForExistingArticles();
-      alert('Views initialized successfully for existing articles!');
-      // Refresh dashboard data
-      await fetchDashboardData();
-    } catch (error) {
-      console.error('Error initializing views:', error);
-      alert('Error initializing views. Please try again.');
-    } finally {
-      setInitializingViews(false);
-    }
-  };
 
   useEffect(() => {
     fetchDashboardData();
@@ -236,17 +223,7 @@ const DashboardPage: React.FC = () => {
               <span className="sm:hidden">Site</span>
             </Link>
           </Button>
-          {isAdmin() && (
-            <Button
-              variant="secondary"
-              onClick={handleInitializeViews}
-              disabled={initializingViews}
-              className="w-full sm:w-auto"
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              {initializingViews ? 'Initializing...' : 'Init Views'}
-            </Button>
-          )}
+
         </div>
       </div>
 
@@ -289,22 +266,24 @@ const DashboardPage: React.FC = () => {
           </Card>
         )}
 
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Advertisements</CardTitle>
-            <Megaphone className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalAds}</div>
-            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-              <span className="text-green-600">Active: {stats.activeAds}</span>
-              <span className="text-red-600">Expired: {stats.expiredAds}</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {stats.expiredAds} expiring soon
-            </p>
-          </CardContent>
-        </Card>
+        {isAdmin() && (
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Advertisements</CardTitle>
+              <Megaphone className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.totalAds}</div>
+              <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                <span className="text-green-600">Active: {stats.activeAds}</span>
+                <span className="text-red-600">Expired: {stats.expiredAds}</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats.expiredAds} expiring soon
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -452,12 +431,14 @@ const DashboardPage: React.FC = () => {
                   Manage Articles
                 </Link>
               </Button>
-              <Button className="w-full justify-start" variant="outline" asChild>
-                <Link to="/admin/ads">
-                  <Megaphone className="h-4 w-4 mr-2" />
-                  Manage Ads
-                </Link>
-              </Button>
+              {isAdmin() && (
+                <Button className="w-full justify-start" variant="outline" asChild>
+                  <Link to="/admin/ads">
+                    <Megaphone className="h-4 w-4 mr-2" />
+                    Manage Ads
+                  </Link>
+                </Button>
+              )}
               <Button className="w-full justify-start" variant="outline" asChild>
                 <Link to="/admin/contacts">
                   <MessageSquare className="h-4 w-4 mr-2" />
